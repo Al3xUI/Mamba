@@ -11,6 +11,8 @@ A brief description of what this project does and who it's for
 
 - Custom nicknames
 - Add profil picture
+- Typing indicator
+- voice message
 
 
 ## Deployment
