@@ -32,10 +32,7 @@ wss.on('connection', (ws) => {
 
             client.addListener('message', (from, to, text, message) => {
                 console.log('IRC message: ', { from, to, text });
-                let clientWS = clients[from]?.ws;
-                if (clientWS && clientWS.readyState === WebSocket.OPEN) {
-                    clientWS.send(JSON.stringify({ from, to, text, type: 'message', avatar: clients[from] ? clients[from].avatar : null }));
-                }
+                broadcastMessage({ from, to, text, type: 'message', avatar: clients[from] ? clients[from].avatar : null });
             });
 
             client.addListener('error', (message) => {
@@ -46,6 +43,11 @@ wss.on('connection', (ws) => {
             let text = msg.text;
             console.log('Sending IRC message: ', { nickname, text });
             clients[nickname].client.say('#yourchannel', text);
+            broadcastMessage({ from: nickname, to: '#yourchannel', text, type: 'message', avatar: clients[nickname].avatar });
+        } else if (msg.type === 'typing') {
+            broadcastMessage({ type: 'typing', nickname: msg.nickname });
+        } else if (msg.type === 'voice') {
+            broadcastMessage({ type: 'voice', audio: msg.audio, nickname: msg.nickname });
         }
     });
 
@@ -60,6 +62,15 @@ wss.on('connection', (ws) => {
         }
     });
 });
+
+function broadcastMessage(msg) {
+    for (let nickname in clients) {
+        let clientWS = clients[nickname].ws;
+        if (clientWS && clientWS.readyState === WebSocket.OPEN) {
+            clientWS.send(JSON.stringify(msg));
+        }
+    }
+}
 
 server.listen(3500, () => {
     console.log('Server is listening on port 3500');

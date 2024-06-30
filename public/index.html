@@ -8,15 +8,16 @@
 </head>
 <body>
     <div id="login">
-        <h2>Join IRC</h2>
-        <input type="text" id="nickname" placeholder="Nickname" required>
-        <input type="text" id="avatar" placeholder="Avatar URL (optional)">
+        <input type="text" id="nickname" placeholder="Enter your nickname" required>
+        <input type="file" id="avatarInput" accept="image/*">
         <button onclick="joinChat()">Join</button>
     </div>
-    <div id="chat" style="display: none;">
+    <div id="chat" style="display:none;">
         <div id="messages"></div>
-        <input type="text" id="messageInput" placeholder="Type your message...">
+        <div id="typingIndicator"></div>
+        <input type="text" id="messageInput" placeholder="Enter your message">
         <button onclick="sendMessage()">Send</button>
+        <button id="voiceMessageButton">Hold to Record Voice Message</button>
     </div>
     <script src="client.js"></script>
 </body>
