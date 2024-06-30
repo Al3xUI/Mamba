@@ -40,7 +40,7 @@ function connectToWebSocket(nickname, avatar) {
         } else if (msg.type === 'typing') {
             displayTypingIndicator(msg);
         } else if (msg.type === 'voice') {
-            playVoiceMessage(msg);
+            displayVoiceMessage(msg);
         }
     };
 
@@ -54,10 +54,12 @@ function connectToWebSocket(nickname, avatar) {
 
 function sendMessage() {
     let messageInput = document.getElementById('messageInput');
-    let message = messageInput.value;
-    console.log('Sending message: ', message);
-    ws.send(JSON.stringify({ type: 'message', text: message, nickname: document.getElementById('nickname').value }));
-    messageInput.value = '';
+    let message = messageInput.value.trim();
+    if (message.length > 0) {
+        console.log('Sending message: ', message);
+        ws.send(JSON.stringify({ type: 'message', text: message, nickname: document.getElementById('nickname').value }));
+        messageInput.value = '';
+    }
 }
 
 function displayMessage(msg) {
@@ -118,14 +120,42 @@ function startRecording() {
                 reader.readAsDataURL(audioBlob);
             };
             mediaRecorder.start();
+            document.getElementById('recordingIndicator').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error accessing media devices.', error);
         });
 }
 
 function stopRecording() {
-    mediaRecorder.stop();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        document.getElementById('recordingIndicator').style.display = 'none';
+    }
 }
 
-function playVoiceMessage(msg) {
-    let audio = new Audio(msg.audio);
-    audio.play();
+function displayVoiceMessage(msg) {
+    let messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    if (msg.avatar) {
+        let avatarElement = document.createElement('img');
+        avatarElement.src = msg.avatar;
+        avatarElement.classList.add('avatar');
+        messageElement.appendChild(avatarElement);
+    }
+    let nicknameElement = document.createElement('span');
+    nicknameElement.classList.add('nickname');
+    nicknameElement.textContent = msg.nickname + ': ';
+    messageElement.appendChild(nicknameElement);
+
+    let audioElement = document.createElement('audio');
+    audioElement.controls = true;
+    let sourceElement = document.createElement('source');
+    sourceElement.src = msg.audio;
+    sourceElement.type = 'audio/wav';
+    audioElement.appendChild(sourceElement);
+²    messageElement.appendChild(audioElement);
+
+    document.getElementById('messages').appendChild(messageElement);
+    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
 }
