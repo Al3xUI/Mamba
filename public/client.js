@@ -154,7 +154,7 @@ function displayVoiceMessage(msg) {
     sourceElement.src = msg.audio;
     sourceElement.type = 'audio/wav';
     audioElement.appendChild(sourceElement);
-²    messageElement.appendChild(audioElement);
+    messageElement.appendChild(audioElement);
 
     document.getElementById('messages').appendChild(messageElement);
     document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
