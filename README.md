@@ -1,7 +1,7 @@
 
-# Memba
+# Mamba
 
-A brief description of what this project does and who it's for
+Mamba, IRC client in js for chat with your friends in real time
 
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
